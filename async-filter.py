@@ -78,7 +78,7 @@ async def Query(domain,DnsResolver,asn_baseline,hash_baseline):
 		Answers = DnsResolver.query(domain, "A")		
 		
 	#Domain did not resolve
-	except dns.resolver.error: #(dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
+	except Exception as e:#dns.resolver.error: #(dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
 		 return [False, DnsResolver.Name]
 	
 	#List of returned IP	
@@ -133,7 +133,7 @@ def lauch(domain):
 			Answers_Google = Google.query(domain, "A") 		
 			
 	#Domain did not resolve		
-	except dns.resolver.error: # (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
+	except Exception as e:#dns.resolver.error: # (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
 			 return [False, Google.Name]
 			 
 	# Contain the returned A record(s)		 
