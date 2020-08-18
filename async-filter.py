@@ -25,6 +25,16 @@ Quad9 = dns.resolver.Resolver()
 SafeDNS= dns.resolver.Resolver()
 ComodoSecure= dns.resolver.Resolver()
 NortonConnectSafe= dns.resolver.Resolver()
+Cloudflare = dns.resolver.Resolver()
+DNSWatch = dns.resolver.Resolver()
+OpenDNS = dns.resolver.Resolver()
+CleanBrowsing = dns.resolver.Resolver()
+Neustart = dns.resolver.Resolver()
+AdGuard = dns.resolver.Resolver()
+AlternateDNS = dns.resolver.Resolver()
+Mullvad = dns.resolver.Resolver()
+Yandex = dns.resolver.Resolver()
+
 
 # Sets IP address and name of each DNS providers
 Google.nameservers = ['8.8.8.8', '8.8.4.4']
@@ -37,10 +47,28 @@ SafeDNS.nameservers = ['195.46.39.39', '195.46.39.40']
 SafeDNS.Name = "SafeDNS"
 ComodoSecure.nameservers = ['8.26.56.26', '8.20.247.20']
 ComodoSecure.Name = "ComodoSecure"
-NortonConnectSafe.nameservers = ['199.85.126.30', '199.85.127.30'] 
+NortonConnectSafe.nameservers = ['199.85.126.30', '199.85.127.30']
 NortonConnectSafe.Name = "NortonConnectSafe"
+Cloudflare.nameservers = ['1.1.1.1']
+Cloudflare.Name = "Cloudflare"
+DNSWatch.nameservers = ['84.200.69.80']
+DNSWatch.Name = "DNSWatch"
+OpenDNS.nameservers = ['208.67.222.222']
+OpenDNS.Name = "OpenDNS"
+CleanBrowsing.nameservers = ['185.228.168.168']
+CleanBrowsing.Name = "CleanBrowsing"
+Neustart.nameservers = ['156.154.70.2']
+Neustart.Name = "Neustart"
+AdGuard.nameservers = ['176.103.130.130']
+AdGuard.Name = "AdGuard"
+AlternateDNS.nameservers = ['198.101.242.72']
+AlternateDNS.Name = "AlternateDNS"
+Mullvad.nameservers = ['193.138.218.74']
+Mullvad.Name = "Mullvad"
+Yandex.nameservers = ['77.88.8.88','77.88.8.2']
+Yandex.Name = "YandexDNS"
 
-Providers = [Strongarm, NortonConnectSafe, ComodoSecure, Quad9, SafeDNS]
+Providers = [Strongarm, NortonConnectSafe, ComodoSecure, Quad9, SafeDNS, Yandex, Cloudflare, DNSWatch, OpenDNS, CleanBrowsing, Neustart, AdGuard, AlternateDNS, Mullvad]
 NumberOfProviders = len(Providers)
 
 # Query a provider and verify the answer
@@ -50,7 +78,7 @@ async def Query(domain,DnsResolver,asn_baseline,hash_baseline):
 		Answers = DnsResolver.query(domain, "A")		
 		
 	#Domain did not resolve
-	except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
+	except dns.resolver.error: #(dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
 		 return [False, DnsResolver.Name]
 	
 	#List of returned IP	
@@ -70,7 +98,7 @@ async def Query(domain,DnsResolver,asn_baseline,hash_baseline):
 
 # Creates the parallels tasks
 async def main(domain,asn_baseline,hash_baseline):
-	Providers = [Strongarm, NortonConnectSafe, ComodoSecure, Quad9, SafeDNS]
+	#Providers = [Strongarm, NortonConnectSafe, ComodoSecure, Quad9, SafeDNS]
 	with concurrent.futures.ThreadPoolExecutor(max_workers=NumberOfProviders) as executor:
 		tasks = [
 			asyncio.ensure_future(Query(domain, Providers[i],asn_baseline,hash_baseline))
@@ -105,7 +133,7 @@ def lauch(domain):
 			Answers_Google = Google.query(domain, "A") 		
 			
 	#Domain did not resolve		
-	except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
+	except dns.resolver.error: # (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer):  
 			 return [False, Google.Name]
 			 
 	# Contain the returned A record(s)		 
